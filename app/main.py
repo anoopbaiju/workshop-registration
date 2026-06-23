@@ -115,7 +115,7 @@ def register(payload: Registration):
     customer_whatsapp = payload.whatsapp
     message = (
         "You're registered! "
-        f"We'll contact you on your WhatsApp number ({customer_whatsapp}) with payment and venue details."
+        f"We'll contact you on your WhatsApp number ({customer_whatsapp}) with payment details."
     )
 
     return {
