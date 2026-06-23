@@ -479,10 +479,35 @@ textarea {
 }
 
 .payment-note {
-  margin: 0 0 1rem;
+  margin: 0 0 0.85rem;
   font-size: 0.82rem;
   color: var(--text-muted);
   line-height: 1.45;
+}
+
+.utr-label {
+  display: grid;
+  gap: 0.35rem;
+  text-align: left;
+  margin-bottom: 1rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.utr-label input {
+  width: 100%;
+  font: inherit;
+  color: var(--text);
+  background: var(--cream);
+  border: 1px solid var(--cream-dark);
+  border-radius: 12px;
+  padding: 0.72rem 0.85rem;
+}
+
+.utr-label input:focus {
+  outline: none;
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(122, 158, 114, 0.22);
 }
 
 .confirm-btn {

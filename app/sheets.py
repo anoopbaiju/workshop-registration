@@ -27,6 +27,7 @@ HEADERS = [
     "How did you hear about us?",
     "Message",
     "Amount Due (INR)",
+    "UPI Ref / UTR",
     "Status",
 ]
 
@@ -55,9 +56,9 @@ def ensure_headers() -> None:
     ws = _sheet()
     first_row = ws.row_values(1)
     if first_row != HEADERS:
-        ws.update("A1:K1", [HEADERS])
+        ws.update("A1:L1", [HEADERS])
         ws.format(
-            "A1:K1",
+            "A1:L1",
             {
                 "textFormat": {"bold": True},
                 "backgroundColor": {"red": 0.18, "green": 0.29, "blue": 0.18},
@@ -92,6 +93,7 @@ def create_pending_registration(data: dict) -> dict:
         data.get("source") or "",
         data.get("message") or "",
         f"{total:.2f}",
+        "",
         "Pending payment",
     ]
     _sheet().append_row(row, value_input_option="USER_ENTERED")
@@ -103,18 +105,19 @@ def create_pending_registration(data: dict) -> dict:
     }
 
 
-def confirm_registration(registration_id: str) -> None:
+def claim_payment(registration_id: str, upi_reference: str) -> None:
     ensure_headers()
     row_idx = _find_row_for_registration(registration_id)
     if row_idx is None:
         raise ValueError("Registration not found")
 
     ws = _sheet()
-    status = ws.cell(row_idx, 11).value
-    if status == "Registered":
+    status = ws.cell(row_idx, 12).value
+    if status in {"Awaiting verification", "Confirmed"}:
         return
 
     if status != "Pending payment":
-        raise ValueError("Registration cannot be confirmed")
+        raise ValueError("Payment cannot be submitted for this registration")
 
-    ws.update_cell(row_idx, 11, "Registered")
+    ws.update_cell(row_idx, 11, upi_reference)
+    ws.update_cell(row_idx, 12, "Awaiting verification")

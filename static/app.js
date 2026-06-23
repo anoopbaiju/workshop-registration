@@ -16,11 +16,11 @@ const seatsSelect = form.querySelector('[name="seats"]');
 const paymentAmount = document.getElementById("payment-amount");
 const paymentBreakdown = document.getElementById("payment-breakdown");
 const registrationIdEl = document.getElementById("registration-id");
-const registrationIdNote = document.getElementById("registration-id-note");
 const payUpiBtn = document.getElementById("pay-upi-btn");
 const upiIdDisplay = document.getElementById("upi-id-display");
 const copyUpiBtn = document.getElementById("copy-upi-btn");
 const paymentQrDynamic = document.getElementById("payment-qr-dynamic");
+const upiReferenceInput = document.getElementById("upi-reference");
 
 let pricePerSeat = 2250;
 let activeRegistrationId = null;
@@ -87,14 +87,23 @@ confirmPaymentBtn.addEventListener("click", async () => {
     return;
   }
 
+  const upiReference = upiReferenceInput.value.trim();
+  if (!upiReference || upiReference.length < 8) {
+    showPaymentError("Please enter your UPI transaction ID (UTR) from your payment app.");
+    return;
+  }
+
   confirmPaymentBtn.disabled = true;
-  confirmPaymentBtn.textContent = "Confirming…";
+  confirmPaymentBtn.textContent = "Submitting…";
 
   try {
     const response = await fetch("/api/confirm-payment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ registration_id: activeRegistrationId }),
+      body: JSON.stringify({
+        registration_id: activeRegistrationId,
+        upi_reference: upiReference,
+      }),
     });
 
     const result = await response.json().catch(() => ({}));
@@ -118,7 +127,7 @@ confirmPaymentBtn.addEventListener("click", async () => {
   } catch (err) {
     showPaymentError(err.message || "Could not confirm payment. Please try again.");
     confirmPaymentBtn.disabled = false;
-    confirmPaymentBtn.textContent = "I Have Completed Payment";
+    confirmPaymentBtn.textContent = "Submit Payment Details";
   }
 });
 
@@ -171,7 +180,6 @@ function showPaymentStep(result) {
   paymentBreakdown.textContent =
     `${payment.seats} seat${payment.seats > 1 ? "s" : ""} × ₹${payment.price_per_seat.toLocaleString("en-IN")}`;
   registrationIdEl.textContent = result.registration_id;
-  registrationIdNote.textContent = result.registration_id;
   payUpiBtn.href = payment.upi_link;
   upiIdDisplay.textContent = payment.upi_id;
   paymentQrDynamic.src = payment.qr_image_url;

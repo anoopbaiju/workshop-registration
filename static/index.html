@@ -144,20 +144,35 @@
       </div>
 
       <p class="payment-note">
-        After paying, tap the button below. Include ref <strong id="registration-id-note"></strong> in the payment note if possible.
+        After paying, enter your <strong>UPI transaction ID (UTR)</strong> from PhonePe/GPay and submit.
+        Your seat is confirmed only after we verify the payment.
       </p>
+
+      <label class="utr-label">
+        UPI Transaction ID (UTR) <span class="req">*</span>
+        <input
+          type="text"
+          id="upi-reference"
+          name="upi_reference"
+          required
+          placeholder="e.g. 123456789012"
+          inputmode="text"
+          autocomplete="off"
+        />
+        <span class="field-hint">Find this in your PhonePe/GPay payment receipt after paying.</span>
+      </label>
 
       <p class="error" id="payment-error" hidden></p>
 
       <button type="button" class="submit-btn confirm-btn" id="confirm-payment-btn">
-        I Have Completed Payment
+        Submit Payment Details
       </button>
     </section>
 
     <section class="success-card" id="success-section" hidden>
       <div class="success-icon" aria-hidden="true">🌱</div>
-      <h2>You're registered!</h2>
-      <p id="success-message">Your registration and payment are complete. We'll contact you on WhatsApp with workshop details.</p>
+      <h2>Payment details received</h2>
+      <p id="success-message">We've received your payment details. We'll verify your UPI payment and confirm your seat on WhatsApp shortly.</p>
       <div class="success-details">
         <p><strong>Saturday, 11 July 2026</strong></p>
       </div>

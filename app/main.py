@@ -13,7 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from app.payment import payment_details, public_pricing
-from app.sheets import confirm_registration, create_pending_registration
+from app.sheets import claim_payment, create_pending_registration
 
 load_dotenv()
 
@@ -73,6 +73,15 @@ class Registration(BaseModel):
 
 class PaymentConfirm(BaseModel):
     registration_id: str = Field(min_length=6, max_length=12)
+    upi_reference: str = Field(min_length=8, max_length=30)
+
+    @field_validator("upi_reference")
+    @classmethod
+    def normalize_upi_reference(cls, value: str) -> str:
+        ref = "".join(ch for ch in value.strip() if ch.isalnum()).upper()
+        if len(ref) < 8:
+            raise ValueError("Enter a valid UPI transaction ID (UTR) from your payment app")
+        return ref
 
 
 def _sheets_configured() -> bool:
@@ -137,17 +146,17 @@ def confirm_payment(payload: PaymentConfirm):
         raise HTTPException(503, "Registration is not configured yet. Contact the organizer.")
 
     try:
-        confirm_registration(payload.registration_id.upper())
+        claim_payment(payload.registration_id.upper(), payload.upi_reference)
     except ValueError as exc:
         raise HTTPException(404, str(exc)) from exc
     except Exception as exc:
-        raise HTTPException(500, f"Could not confirm payment: {exc}") from exc
+        raise HTTPException(500, f"Could not submit payment details: {exc}") from exc
 
     return {
         "ok": True,
         "message": (
-            "Payment received! Your registration for Moss & Magic is complete. "
-            "We'll contact you on WhatsApp with workshop details."
+            "Thank you! We've received your payment details. "
+            "We'll verify the UPI payment and confirm your seat on WhatsApp shortly."
         ),
         "whatsapp_number": WHATSAPP_NUMBER,
         "whatsapp_link": WHATSAPP_LINK,
