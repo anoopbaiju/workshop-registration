@@ -77,11 +77,16 @@ def _sheets_configured() -> bool:
 
 
 @app.get("/")
+@app.head("/")
 def index():
-    return FileResponse(STATIC / "index.html")
+    page = STATIC / "index.html"
+    if not page.is_file():
+        raise HTTPException(500, f"Registration page missing at {page}")
+    return FileResponse(page)
 
 
 @app.get("/health")
+@app.head("/health")
 def health():
     return {"ok": True}
 
