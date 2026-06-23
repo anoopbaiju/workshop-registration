@@ -22,7 +22,7 @@ STATIC = ROOT / "static"
 WHATSAPP_NUMBER = os.getenv("ORG_WHATSAPP_DISPLAY", "+91 95676 02762")
 WHATSAPP_LINK = os.getenv("ORG_WHATSAPP_LINK", "https://wa.me/919567602762")
 
-app = FastAPI(title="Dhruvs Creations — Workshop Registration")
+app = FastAPI(title="Moss & Magic — Dhruvs Creations")
 
 origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 app.add_middleware(

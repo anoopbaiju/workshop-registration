@@ -116,33 +116,19 @@ body {
   padding: 0.65rem;
 }
 
-.gallery-hero img,
-.gallery-row img {
+.hero-poster {
+  margin-bottom: 1rem;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(92, 61, 30, 0.1);
+  background: var(--white);
+}
+
+.hero-poster img {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 14px;
-}
-
-.gallery-hero {
-  height: 220px;
-  margin-bottom: 0.55rem;
-}
-
-.gallery-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.55rem;
-  height: 130px;
-}
-
-.gallery-caption {
-  margin: 0.75rem 0 0.25rem;
-  text-align: center;
-  font-size: 0.88rem;
-  color: var(--forest-light);
-  font-weight: 500;
+  height: auto;
 }
 
 .date-card {

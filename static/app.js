@@ -63,7 +63,7 @@ form.addEventListener("submit", async (event) => {
   } catch (err) {
     showError(err.message || "Could not submit registration. Please try again.");
     submitBtn.disabled = false;
-    submitBtn.textContent = "Register for Workshop";
+    submitBtn.textContent = "Register for Moss & Magic";
   }
 });
 
