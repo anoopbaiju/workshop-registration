@@ -49,7 +49,7 @@ class Registration(BaseModel):
     whatsapp: str = Field(min_length=10, max_length=20)
     email: EmailStr
     age_group: str
-    seats: int = Field(ge=1, le=10)
+    seats: int = Field(ge=1, le=5)
     source: str | None = Field(default=None, max_length=120)
     message: str | None = Field(default=None, max_length=500)
 
