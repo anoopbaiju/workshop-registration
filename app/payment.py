@@ -1,4 +1,4 @@
-"""Build UPI payment links for workshop fees."""
+"""Build UPI payment details for workshop fees."""
 
 from __future__ import annotations
 
@@ -6,37 +6,24 @@ import os
 from urllib.parse import quote
 
 
-def _price(name: str, default: str) -> float:
-    raw = os.getenv(name, default)
+def price_per_seat() -> float:
+    raw = os.getenv("WORKSHOP_PRICE_PER_SEAT", "2250")
     try:
         return max(0.0, float(raw))
     except ValueError:
-        return float(default)
+        return 2250.0
 
 
-def price_per_seat(offer: str) -> float:
-    if offer == "Early Bird":
-        return _price("WORKSHOP_PRICE_EARLY_BIRD", "599")
-    return _price("WORKSHOP_PRICE_STANDARD", "799")
+def amount_due(seats: int) -> float:
+    return round(price_per_seat() * seats, 2)
 
 
-def amount_due(offer: str, seats: int) -> float:
-    return round(price_per_seat(offer) * seats, 2)
-
-
-def upi_configured() -> bool:
-    return bool(os.getenv("UPI_VPA", "").strip())
-
-
-def payment_details(*, offer: str, seats: int, payer_name: str) -> dict | None:
-    vpa = os.getenv("UPI_VPA", "").strip()
-    if not vpa:
-        return None
-
-    payee = os.getenv("UPI_PAYEE_NAME", "Dhruvs Creations").strip()
-    per_seat = price_per_seat(offer)
-    total = amount_due(offer, seats)
-    note = f"Terrarium Workshop - {payer_name}"[:50]
+def payment_details(*, seats: int, payer_name: str, registration_id: str) -> dict:
+    vpa = os.getenv("UPI_VPA", "alwaysdevu@ybl").strip()
+    payee = os.getenv("UPI_PAYEE_NAME", "DEVU M").strip()
+    per_seat = price_per_seat()
+    total = amount_due(seats)
+    note = f"Moss Magic {registration_id} - {payer_name}"[:50]
 
     params = (
         f"pa={quote(vpa)}"
@@ -51,16 +38,19 @@ def payment_details(*, offer: str, seats: int, payer_name: str) -> dict | None:
         "upi_id": vpa,
         "payee_name": payee,
         "price_per_seat": per_seat,
+        "seats": seats,
         "amount_due": total,
         "currency": "INR",
         "upi_link": upi_link,
+        "qr_image_url": f"https://api.qrserver.com/v1/create-qr-code/?size=260x260&data={quote(upi_link)}",
+        "static_qr_path": "/static/images/upi-qr.png",
         "note": note,
     }
 
 
 def public_pricing() -> dict:
+    per_seat = price_per_seat()
     return {
-        "early_bird_per_seat": _price("WORKSHOP_PRICE_EARLY_BIRD", "599"),
-        "standard_per_seat": _price("WORKSHOP_PRICE_STANDARD", "799"),
-        "upi_configured": upi_configured(),
+        "price_per_seat": per_seat,
+        "currency": "INR",
     }

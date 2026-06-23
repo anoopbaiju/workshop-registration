@@ -1,4 +1,4 @@
-"""Terrarium Workshop registration — serves form and writes to Google Sheets."""
+"""Moss & Magic registration — form, UPI payment, Google Sheets."""
 
 from __future__ import annotations
 
@@ -12,7 +12,8 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
-from app.sheets import append_registration
+from app.payment import payment_details, public_pricing
+from app.sheets import confirm_registration, create_pending_registration
 
 load_dotenv()
 
@@ -70,6 +71,10 @@ class Registration(BaseModel):
         return value
 
 
+class PaymentConfirm(BaseModel):
+    registration_id: str = Field(min_length=6, max_length=12)
+
+
 def _sheets_configured() -> bool:
     if os.getenv("GOOGLE_SHEET_ID") and os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON"):
         return True
@@ -97,6 +102,7 @@ def status():
         "configured": _sheets_configured(),
         "whatsapp_number": WHATSAPP_NUMBER,
         "whatsapp_link": WHATSAPP_LINK,
+        **public_pricing(),
     }
 
 
@@ -106,22 +112,43 @@ def register(payload: Registration):
         raise HTTPException(503, "Registration is not configured yet. Contact the organizer.")
 
     try:
-        result = append_registration(payload.model_dump())
+        result = create_pending_registration(payload.model_dump())
+        payment = payment_details(
+            seats=result["seats"],
+            payer_name=payload.full_name,
+            registration_id=result["registration_id"],
+        )
     except FileNotFoundError:
         raise HTTPException(503, "Google credentials file not found. Contact the organizer.")
     except Exception as exc:
         raise HTTPException(500, f"Could not save registration: {exc}") from exc
 
-    customer_whatsapp = payload.whatsapp
-    message = (
-        "You're registered! "
-        f"We'll contact you on your WhatsApp number ({customer_whatsapp}) with payment details."
-    )
+    return {
+        "ok": True,
+        "registration_id": result["registration_id"],
+        "seats": result["seats"],
+        "payment": payment,
+    }
+
+
+@app.post("/api/confirm-payment")
+def confirm_payment(payload: PaymentConfirm):
+    if not _sheets_configured():
+        raise HTTPException(503, "Registration is not configured yet. Contact the organizer.")
+
+    try:
+        confirm_registration(payload.registration_id.upper())
+    except ValueError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(500, f"Could not confirm payment: {exc}") from exc
 
     return {
         "ok": True,
-        "seats": result["seats"],
-        "message": message,
+        "message": (
+            "Payment received! Your registration for Moss & Magic is complete. "
+            "We'll contact you on WhatsApp with workshop details."
+        ),
         "whatsapp_number": WHATSAPP_NUMBER,
         "whatsapp_link": WHATSAPP_LINK,
     }

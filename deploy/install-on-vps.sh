@@ -18,9 +18,15 @@ systemctl restart workshop-registration
 systemctl --no-pager status workshop-registration
 
 echo "==> nginx site"
+if ! command -v nginx >/dev/null 2>&1; then
+  apt-get update
+  apt-get install -y nginx
+fi
+mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled
 cp deploy/nginx-register.conf /etc/nginx/sites-available/register.dhruvscreations.com
 ln -sf /etc/nginx/sites-available/register.dhruvscreations.com /etc/nginx/sites-enabled/
 nginx -t
+systemctl enable nginx
 systemctl reload nginx
 
 echo ""

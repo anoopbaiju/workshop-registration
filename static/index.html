@@ -44,12 +44,13 @@
         <li><span aria-hidden="true">🪴</span> Take home your own terrarium</li>
         <li><span aria-hidden="true">📦</span> All materials provided</li>
       </ul>
-      <p class="limited">Book your seat in advance — limited seats available!</p>
+      <p class="limited">₹2,250 per person — book your seat in advance!</p>
     </section>
 
     <section class="form-card" id="form-section">
       <h2>Register Now</h2>
-      <p class="form-intro">Fill in your details below. We'll confirm your seat on WhatsApp.</p>
+      <p class="form-intro">Fill in your details, then complete UPI payment to confirm your seat.</p>
+      <p class="price-preview" id="price-preview" hidden></p>
 
       <form id="registration-form" novalidate>
         <label>
@@ -110,15 +111,52 @@
         <p class="error" id="form-error" hidden></p>
 
         <button type="submit" class="submit-btn" id="submit-btn">
-          Register for Moss & Magic
+          Continue to Payment
         </button>
       </form>
+    </section>
+
+    <section class="payment-card" id="payment-section" hidden>
+      <h2>Complete Payment</h2>
+      <p class="payment-intro">Pay the exact amount below to confirm your registration.</p>
+      <p class="payment-amount" id="payment-amount"></p>
+      <p class="payment-breakdown" id="payment-breakdown"></p>
+      <p class="registration-ref">Ref: <span id="registration-id"></span></p>
+
+      <div class="qr-panel">
+        <img
+          id="payment-qr-dynamic"
+          class="payment-qr"
+          alt="UPI payment QR code for your registration amount"
+          width="260"
+          height="260"
+        />
+        <p class="qr-hint">Scan with PhonePe, GPay, or any UPI app</p>
+      </div>
+
+      <a class="pay-upi-btn" id="pay-upi-btn" href="#">Pay with UPI App</a>
+
+      <div class="upi-id-row">
+        <span class="upi-id-label">UPI ID</span>
+        <code id="upi-id-display">alwaysdevu@ybl</code>
+        <button type="button" class="copy-btn" id="copy-upi-btn">Copy</button>
+      </div>
+
+      <p class="payment-note">
+        After paying, tap the button below. Include ref <strong id="registration-id-note"></strong> in the payment note if possible.
+      </p>
+
+      <p class="error" id="payment-error" hidden></p>
+
+      <button type="button" class="submit-btn confirm-btn" id="confirm-payment-btn">
+        I Have Completed Payment
+      </button>
     </section>
 
     <section class="success-card" id="success-section" hidden>
       <div class="success-icon" aria-hidden="true">🌱</div>
       <h2>You're registered!</h2>
-      <p id="success-message">Thank you for booking your seat. We'll contact you on the WhatsApp number you provided with payment details.</p>
+      <p id="success-message">Your registration and payment are complete. We'll contact you on WhatsApp with workshop details.</p>
       <div class="success-details">
         <p><strong>Saturday, 11 July 2026</strong></p>
       </div>

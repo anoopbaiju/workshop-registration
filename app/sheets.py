@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import uuid
 from datetime import datetime
 from functools import lru_cache
 from zoneinfo import ZoneInfo
@@ -11,10 +12,13 @@ from zoneinfo import ZoneInfo
 import gspread
 from google.oauth2.service_account import Credentials
 
+from app.payment import amount_due
+
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 HEADERS = [
     "Timestamp (IST)",
+    "Registration ID",
     "Full Name",
     "WhatsApp Number",
     "Email",
@@ -22,6 +26,7 @@ HEADERS = [
     "Number of Seats",
     "How did you hear about us?",
     "Message",
+    "Amount Due (INR)",
     "Status",
 ]
 
@@ -50,9 +55,9 @@ def ensure_headers() -> None:
     ws = _sheet()
     first_row = ws.row_values(1)
     if first_row != HEADERS:
-        ws.update("A1:I1", [HEADERS])
+        ws.update("A1:K1", [HEADERS])
         ws.format(
-            "A1:I1",
+            "A1:K1",
             {
                 "textFormat": {"bold": True},
                 "backgroundColor": {"red": 0.18, "green": 0.29, "blue": 0.18},
@@ -61,12 +66,24 @@ def ensure_headers() -> None:
         )
 
 
-def append_registration(data: dict) -> dict:
-    ensure_headers()
+def _find_row_for_registration(registration_id: str) -> int | None:
+    ws = _sheet()
+    values = ws.get_all_values()
+    for idx, row in enumerate(values[1:], start=2):
+        if len(row) > 1 and row[1] == registration_id:
+            return idx
+    return None
 
+
+def create_pending_registration(data: dict) -> dict:
+    ensure_headers()
+    registration_id = uuid.uuid4().hex[:8].upper()
+    total = amount_due(data["seats"])
     now = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
+
     row = [
         now,
+        registration_id,
         data["full_name"],
         data["whatsapp"],
         data["email"],
@@ -74,8 +91,30 @@ def append_registration(data: dict) -> dict:
         str(data["seats"]),
         data.get("source") or "",
         data.get("message") or "",
-        "New",
+        f"{total:.2f}",
+        "Pending payment",
     ]
     _sheet().append_row(row, value_input_option="USER_ENTERED")
 
-    return {"seats": data["seats"]}
+    return {
+        "registration_id": registration_id,
+        "seats": data["seats"],
+        "amount_due": total,
+    }
+
+
+def confirm_registration(registration_id: str) -> None:
+    ensure_headers()
+    row_idx = _find_row_for_registration(registration_id)
+    if row_idx is None:
+        raise ValueError("Registration not found")
+
+    ws = _sheet()
+    status = ws.cell(row_idx, 11).value
+    if status == "Registered":
+        return
+
+    if status != "Pending payment":
+        raise ValueError("Registration cannot be confirmed")
+
+    ws.update_cell(row_idx, 11, "Registered")
