@@ -12,7 +12,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
-from app.sheets import EARLY_BIRD_LIMIT, append_registration, early_bird_remaining
+from app.sheets import append_registration
 
 load_dotenv()
 
@@ -93,24 +93,11 @@ def health():
 
 @app.get("/api/status")
 def status():
-    payload = {
-        "early_bird_limit": EARLY_BIRD_LIMIT,
-        "early_bird_remaining": EARLY_BIRD_LIMIT,
-        "configured": False,
+    return {
+        "configured": _sheets_configured(),
         "whatsapp_number": WHATSAPP_NUMBER,
         "whatsapp_link": WHATSAPP_LINK,
     }
-
-    if not _sheets_configured():
-        return payload
-
-    try:
-        payload["early_bird_remaining"] = early_bird_remaining()
-        payload["configured"] = True
-    except Exception:
-        pass
-
-    return payload
 
 
 @app.post("/api/register")
@@ -126,22 +113,14 @@ def register(payload: Registration):
         raise HTTPException(500, f"Could not save registration: {exc}") from exc
 
     customer_whatsapp = payload.whatsapp
-    if result["offer"] == "Early Bird":
-        message = (
-            "You're registered with the Early Bird offer! "
-            f"We'll contact you on your WhatsApp number ({customer_whatsapp}) with payment details."
-        )
-    else:
-        message = (
-            "You're registered! Early bird slots are full, but your seat is booked. "
-            f"We'll contact you on your WhatsApp number ({customer_whatsapp}) with payment details."
-        )
+    message = (
+        "You're registered! "
+        f"We'll contact you on your WhatsApp number ({customer_whatsapp}) with payment and venue details."
+    )
 
     return {
         "ok": True,
-        "offer": result["offer"],
         "seats": result["seats"],
-        "early_bird_remaining": result["early_bird_remaining"],
         "message": message,
         "whatsapp_number": WHATSAPP_NUMBER,
         "whatsapp_link": WHATSAPP_LINK,
