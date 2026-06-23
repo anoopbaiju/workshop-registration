@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Register for the Terrarium Workshop on Saturday, 11 July 2026 at Shastamangalam, Trivandrum — Dhruvs Creations." />
+  <meta name="theme-color" content="#2f4a2e" />
+  <title>Terrarium Workshop | Dhruvs Creations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Dancing+Script:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="leaf leaf-tl" aria-hidden="true"></div>
+  <div class="leaf leaf-tr" aria-hidden="true"></div>
+  <div class="leaf leaf-bl" aria-hidden="true"></div>
+
+  <div class="page">
+    <header class="hero">
+      <p class="brand">Dhruvs Creations</p>
+      <p class="presents">presents</p>
+      <h1>Terrarium Workshop</h1>
+      <p class="tagline">Create your own miniature garden in a glass!</p>
+    </header>
+
+    <section class="early-bird" id="early-bird-banner">
+      <div class="early-bird-inner">
+        <span class="early-bird-label">Early Bird Offer</span>
+        <p class="early-bird-text">First <strong>10 registrations</strong> get the early bird price</p>
+        <p class="early-bird-slots" id="early-bird-slots">Checking availability…</p>
+      </div>
+    </section>
+
+    <section class="date-card">
+      <div class="date-block">
+        <span class="date-day">Saturday</span>
+        <span class="date-main">11 July 2026</span>
+      </div>
+      <div class="venue-block">
+        <span class="venue-label">Venue</span>
+        <p class="venue-name">Sharanya</p>
+        <p class="venue-address">
+          House No. 36, Near SFS Richmond Apartments,<br />
+          Shastamangalam, Trivandrum
+        </p>
+        <a
+          class="map-link"
+          href="https://maps.google.com/?q=Sharanya+House+No+36+SFS+Richmond+Apartments+Shastamangalam+Trivandrum"
+          target="_blank"
+          rel="noopener noreferrer"
+        >Open in Google Maps</a>
+      </div>
+    </section>
+
+    <section class="info-card">
+      <ul class="highlights">
+        <li><span aria-hidden="true">🌿</span> Suitable for all ages</li>
+        <li><span aria-hidden="true">✨</span> No prior experience required</li>
+        <li><span aria-hidden="true">🪴</span> Take home your own terrarium</li>
+        <li><span aria-hidden="true">📦</span> All materials provided</li>
+      </ul>
+      <p class="limited">Book your seat in advance — limited seats available!</p>
+    </section>
+
+    <section class="form-card" id="form-section">
+      <h2>Register Now</h2>
+      <p class="form-intro">Fill in your details below. We'll confirm your seat on WhatsApp.</p>
+
+      <form id="registration-form" novalidate>
+        <label>
+          Full Name <span class="req">*</span>
+          <input type="text" name="full_name" autocomplete="name" required placeholder="Participant or parent/guardian name" />
+        </label>
+
+        <label>
+          WhatsApp Number <span class="req">*</span>
+          <input type="tel" name="whatsapp" autocomplete="tel" required placeholder="e.g. 95676 02762" inputmode="tel" />
+        </label>
+
+        <label>
+          Email Address <span class="req">*</span>
+          <input type="email" name="email" autocomplete="email" required placeholder="you@email.com" />
+        </label>
+
+        <label>
+          Age Group <span class="req">*</span>
+          <select name="age_group" required>
+            <option value="" disabled selected>Select age group</option>
+            <option value="Child (under 12)">Child (under 12)</option>
+            <option value="Teen (12–17)">Teen (12–17)</option>
+            <option value="Adult (18+)">Adult (18+)</option>
+            <option value="Family / mixed ages">Family / mixed ages</option>
+          </select>
+        </label>
+
+        <label>
+          Number of Seats <span class="req">*</span>
+          <select name="seats" required>
+            <option value="" disabled selected>How many people?</option>
+            <option value="1">1 seat</option>
+            <option value="2">2 seats</option>
+            <option value="3">3 seats</option>
+            <option value="4">4 seats</option>
+            <option value="5">5+ seats (contact us first)</option>
+          </select>
+        </label>
+
+        <label>
+          How did you hear about us? <span class="optional">(optional)</span>
+          <select name="source">
+            <option value="">Select one</option>
+            <option value="WhatsApp">WhatsApp</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Friend / Family">Friend / Family</option>
+            <option value="Flyer / Poster">Flyer / Poster</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+
+        <label>
+          Message <span class="optional">(optional)</span>
+          <textarea name="message" rows="3" placeholder="Any questions or special requests?"></textarea>
+        </label>
+
+        <p class="error" id="form-error" hidden></p>
+
+        <button type="submit" class="submit-btn" id="submit-btn">
+          Avail Early Bird Offer — Book Now
+        </button>
+      </form>
+    </section>
+
+    <section class="success-card" id="success-section" hidden>
+      <div class="success-icon" aria-hidden="true">🌱</div>
+      <h2>You're registered!</h2>
+      <p id="success-message">Thank you for booking your seat. We'll contact you on the WhatsApp number you provided with payment details.</p>
+      <div class="success-details">
+        <p><strong>Saturday, 11 July 2026</strong></p>
+        <p>Sharanya, Shastamangalam, Trivandrum</p>
+      </div>
+      <p class="contact-line">
+        Questions? Message us on
+        <a class="whatsapp-link" id="success-whatsapp-link" href="https://wa.me/919567602762">
+          <svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp <span id="success-whatsapp-number">+91 95676 02762</span>
+        </a>
+      </p>
+    </section>
+
+    <footer>
+      <p class="footer-brand">Dhruvs Creations</p>
+      <a class="footer-whatsapp" id="footer-whatsapp-link" href="https://wa.me/919567602762">
+        <svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp <span id="footer-whatsapp-number">+91 95676 02762</span>
+      </a>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
