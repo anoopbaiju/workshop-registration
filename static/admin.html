@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirm payments | Moss & Magic</title>
+  <style>
+    :root {
+      --green: #1b4332;
+      --cream: #f8f5ef;
+      --border: #d4cfc4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--cream);
+      color: #222;
+      padding: 1rem;
+      max-width: 640px;
+      margin-inline: auto;
+    }
+    h1 { font-size: 1.25rem; color: var(--green); margin: 0 0 0.25rem; }
+    .sub { color: #666; font-size: 0.9rem; margin-bottom: 1.25rem; }
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .card h2 { margin: 0 0 0.5rem; font-size: 1rem; }
+    .meta { font-size: 0.85rem; color: #555; line-height: 1.5; }
+    .meta strong { color: #333; }
+    button, .btn {
+      display: inline-block;
+      border: none;
+      border-radius: 8px;
+      padding: 0.65rem 1rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+    }
+    .btn-primary { background: var(--green); color: #fff; width: 100%; margin-top: 0.75rem; }
+    .btn-wa { background: #25d366; color: #fff; width: 100%; margin-top: 0.5rem; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: #333; }
+    #login { max-width: 360px; margin: 2rem auto; }
+    input[type="password"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      margin: 0.5rem 0 1rem;
+    }
+    .error { color: #b00020; font-size: 0.9rem; margin-top: 0.5rem; }
+    .empty { color: #666; font-style: italic; padding: 1rem 0; }
+    .toolbar { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .badge {
+      display: inline-block;
+      background: #fff3cd;
+      color: #856404;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      margin-left: 0.35rem;
+    }
+    .badge.ok { background: #d4edda; color: #155724; }
+  </style>
+</head>
+<body>
+  <div id="login" class="card">
+    <h1>Organizer login</h1>
+    <p class="sub">Confirm payments without editing the Google Sheet.</p>
+    <label for="key">Admin password</label>
+    <input type="password" id="key" autocomplete="current-password" />
+    <button class="btn-primary" id="login-btn">Continue</button>
+    <p class="error" id="login-error" hidden></p>
+  </div>
+
+  <div id="app" hidden>
+    <h1>Payment confirmations</h1>
+    <p class="sub">Verify UTR in PhonePe, then confirm and send WhatsApp.</p>
+    <div class="toolbar">
+      <button class="btn-outline" id="refresh-btn">Refresh</button>
+      <button class="btn-outline" id="logout-btn">Log out</button>
+    </div>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "moss_magic_admin_key";
+
+    const loginEl = document.getElementById("login");
+    const appEl = document.getElementById("app");
+    const keyInput = document.getElementById("key");
+    const loginBtn = document.getElementById("login-btn");
+    const loginError = document.getElementById("login-error");
+    const listEl = document.getElementById("list");
+
+    function getKey() {
+      return sessionStorage.getItem(STORAGE_KEY) || "";
+    }
+
+    function setKey(value) {
+      if (value) sessionStorage.setItem(STORAGE_KEY, value);
+      else sessionStorage.removeItem(STORAGE_KEY);
+    }
+
+    async function api(path, options = {}) {
+      const key = getKey();
+      const res = await fetch(path, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          "X-Admin-Key": key,
+          ...(options.headers || {}),
+        },
+      });
+      if (res.status === 401) {
+        setKey("");
+        showLogin("Wrong password. Try again.");
+        throw new Error("unauthorized");
+      }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.detail || "Request failed");
+      return data;
+    }
+
+    function showLogin(msg) {
+      loginEl.hidden = false;
+      appEl.hidden = true;
+      if (msg) {
+        loginError.textContent = msg;
+        loginError.hidden = false;
+      } else {
+        loginError.hidden = true;
+      }
+    }
+
+    function showApp() {
+      loginEl.hidden = true;
+      appEl.hidden = false;
+      loginError.hidden = true;
+    }
+
+    function renderCard(item) {
+      const card = document.createElement("div");
+      card.className = "card";
+      const badge =
+        item.status === "Awaiting verification"
+          ? '<span class="badge">Awaiting verification</span>'
+          : item.status === "Confirmed"
+            ? '<span class="badge ok">Confirmed</span>'
+            : `<span class="badge">${item.status}</span>`;
+
+      card.innerHTML = `
+        <h2>${escapeHtml(item.full_name)}${badge}</h2>
+        <div class="meta">
+          <div><strong>ID:</strong> ${escapeHtml(item.registration_id)}</div>
+          <div><strong>WhatsApp:</strong> ${escapeHtml(item.whatsapp)}</div>
+          <div><strong>Seats:</strong> ${escapeHtml(item.seats)} · <strong>Amount:</strong> ₹${escapeHtml(item.amount_due)}</div>
+          <div><strong>UTR:</strong> ${escapeHtml(item.upi_reference || "—")}</div>
+          <div><strong>Registered:</strong> ${escapeHtml(item.timestamp)}</div>
+        </div>
+      `;
+
+      if (item.status === "Awaiting verification") {
+        const btn = document.createElement("button");
+        btn.className = "btn-primary";
+        btn.textContent = "Confirm payment & open WhatsApp";
+        btn.addEventListener("click", () => confirmOne(item.registration_id, btn));
+        card.appendChild(btn);
+      } else if (item.status === "Confirmed" && item.whatsapp_confirm_link) {
+        const link = document.createElement("a");
+        link.className = "btn btn-wa";
+        link.href = item.whatsapp_confirm_link;
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.textContent = "Resend WhatsApp confirmation";
+        card.appendChild(link);
+      }
+
+      return card;
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    async function loadList() {
+      listEl.innerHTML = "<p class='empty'>Loading…</p>";
+      try {
+        const data = await api("/api/admin/registrations");
+        const items = data.registrations || [];
+        const pending = items.filter((r) => r.status === "Awaiting verification");
+        const others = items.filter((r) => r.status !== "Awaiting verification");
+
+        listEl.innerHTML = "";
+        if (!pending.length && !others.length) {
+          listEl.innerHTML = "<p class='empty'>No registrations yet.</p>";
+          return;
+        }
+        if (!pending.length) {
+          listEl.innerHTML = "<p class='empty'>No payments waiting for verification. 🎉</p>";
+        } else {
+          const heading = document.createElement("p");
+          heading.innerHTML = `<strong>${pending.length}</strong> awaiting verification`;
+          listEl.appendChild(heading);
+          pending.forEach((item) => listEl.appendChild(renderCard(item)));
+        }
+        if (others.length) {
+          const hr = document.createElement("p");
+          hr.className = "sub";
+          hr.style.marginTop = "1.5rem";
+          hr.textContent = "Other registrations";
+          listEl.appendChild(hr);
+          others.slice(0, 20).forEach((item) => listEl.appendChild(renderCard(item)));
+        }
+      } catch (err) {
+        if (err.message !== "unauthorized") {
+          listEl.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`;
+        }
+      }
+    }
+
+    async function confirmOne(registrationId, btn) {
+      btn.disabled = true;
+      btn.textContent = "Confirming…";
+      try {
+        const data = await api("/api/admin/confirm", {
+          method: "POST",
+          body: JSON.stringify({ registration_id: registrationId }),
+        });
+        if (data.whatsapp_confirm_link) {
+          window.open(data.whatsapp_confirm_link, "_blank");
+        }
+        await loadList();
+      } catch (err) {
+        if (err.message !== "unauthorized") {
+          alert(err.message);
+        }
+        btn.disabled = false;
+        btn.textContent = "Confirm payment & open WhatsApp";
+      }
+    }
+
+    loginBtn.addEventListener("click", async () => {
+      const key = keyInput.value.trim();
+      if (!key) return;
+      setKey(key);
+      try {
+        await api("/api/admin/registrations");
+        showApp();
+        await loadList();
+      } catch {
+        /* showLogin handled in api() */
+      }
+    });
+
+    keyInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loginBtn.click();
+    });
+
+    document.getElementById("refresh-btn").addEventListener("click", loadList);
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      setKey("");
+      keyInput.value = "";
+      showLogin();
+    });
+
+    if (getKey()) {
+      showApp();
+      loadList();
+    }
+  </script>
+</body>
+</html>

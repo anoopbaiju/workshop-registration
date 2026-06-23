@@ -6,14 +6,14 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from app.payment import payment_details, public_pricing
-from app.sheets import claim_payment, create_pending_registration
+from app.sheets import claim_payment, confirm_registration, create_pending_registration, list_registrations
 
 load_dotenv()
 
@@ -22,6 +22,7 @@ STATIC = ROOT / "static"
 
 WHATSAPP_NUMBER = os.getenv("ORG_WHATSAPP_DISPLAY", "+91 95676 02762")
 WHATSAPP_LINK = os.getenv("ORG_WHATSAPP_LINK", "https://wa.me/919567602762")
+ADMIN_SECRET = os.getenv("ADMIN_SECRET", "").strip()
 
 app = FastAPI(title="Moss & Magic — Dhruvs Creations")
 
@@ -84,10 +85,21 @@ class PaymentConfirm(BaseModel):
         return ref
 
 
+class AdminConfirm(BaseModel):
+    registration_id: str = Field(min_length=6, max_length=12)
+
+
 def _sheets_configured() -> bool:
     if os.getenv("GOOGLE_SHEET_ID") and os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON"):
         return True
     return bool(os.getenv("GOOGLE_SHEET_ID") and os.getenv("GOOGLE_SERVICE_ACCOUNT_FILE"))
+
+
+def _require_admin(x_admin_key: str | None) -> None:
+    if not ADMIN_SECRET:
+        raise HTTPException(503, "Admin page is not configured. Set ADMIN_SECRET on the server.")
+    if not x_admin_key or x_admin_key != ADMIN_SECRET:
+        raise HTTPException(401, "Invalid admin password")
 
 
 @app.get("/")
@@ -103,6 +115,15 @@ def index():
 @app.head("/health")
 def health():
     return {"ok": True}
+
+
+@app.get("/admin")
+@app.head("/admin")
+def admin_page():
+    page = STATIC / "admin.html"
+    if not page.is_file():
+        raise HTTPException(500, "Admin page missing")
+    return FileResponse(page)
 
 
 @app.get("/api/status")
@@ -161,3 +182,37 @@ def confirm_payment(payload: PaymentConfirm):
         "whatsapp_number": WHATSAPP_NUMBER,
         "whatsapp_link": WHATSAPP_LINK,
     }
+
+
+@app.get("/api/admin/registrations")
+def admin_registrations(x_admin_key: str | None = Header(default=None)):
+    _require_admin(x_admin_key)
+    if not _sheets_configured():
+        raise HTTPException(503, "Google Sheets is not configured")
+
+    try:
+        registrations = list_registrations()
+    except Exception as exc:
+        raise HTTPException(500, f"Could not load registrations: {exc}") from exc
+
+    registrations.sort(key=lambda row: row["timestamp"], reverse=True)
+    return {"registrations": registrations}
+
+
+@app.post("/api/admin/confirm")
+def admin_confirm(
+    payload: AdminConfirm,
+    x_admin_key: str | None = Header(default=None),
+):
+    _require_admin(x_admin_key)
+    if not _sheets_configured():
+        raise HTTPException(503, "Google Sheets is not configured")
+
+    try:
+        result = confirm_registration(payload.registration_id)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(500, f"Could not confirm registration: {exc}") from exc
+
+    return {"ok": True, **result}
