@@ -139,6 +139,7 @@ body {
 
 .date-block,
 .gallery-card,
+.venue-card,
 .info-card,
 .form-card,
 .success-card {
@@ -221,6 +222,55 @@ body {
   font-size: 0.85rem;
   color: var(--text-muted);
   font-style: italic;
+}
+
+.venue-card {
+  padding: 1.15rem 1.15rem 1.25rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.venue-label {
+  margin: 0 0 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--forest-light);
+}
+
+.venue-name {
+  margin: 0 0 0.45rem;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--brown);
+  line-height: 1.15;
+}
+
+.venue-address {
+  margin: 0 0 0.9rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.maps-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: var(--forest);
+  color: #f7f3ea;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.maps-link:hover {
+  background: var(--forest-light);
 }
 
 .info-card {
@@ -595,6 +645,16 @@ textarea {
   margin: 0.15rem 0;
   color: var(--text);
   font-size: 0.9rem;
+}
+
+.success-details a {
+  color: var(--forest);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.success-details a:hover {
+  text-decoration: underline;
 }
 
 footer {

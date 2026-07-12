@@ -1,7 +1,7 @@
 # Terrarium Workshop Registration
 
 Mobile-friendly registration page for **Dhruvs Creations — Terrarium Workshop**.  
-**Thursday, 23 July 2026** · Sharanya, Shastamangalam, Trivandrum.
+**Thursday, 23 July 2026** · Sharanya, Sashtamangalam, Trivandrum · ₹3,000 per person.
 
 Share the link on WhatsApp; each submission is saved automatically to your **Google Sheet**.
 

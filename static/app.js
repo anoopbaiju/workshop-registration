@@ -22,7 +22,7 @@ const copyUpiBtn = document.getElementById("copy-upi-btn");
 const paymentQrDynamic = document.getElementById("payment-qr-dynamic");
 const upiReferenceInput = document.getElementById("upi-reference");
 
-let pricePerSeat = 2250;
+let pricePerSeat = 3000;
 let activeRegistrationId = null;
 
 loadStatus();

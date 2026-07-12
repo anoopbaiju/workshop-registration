@@ -7,11 +7,11 @@ from urllib.parse import quote
 
 
 def price_per_seat() -> float:
-    raw = os.getenv("WORKSHOP_PRICE_PER_SEAT", "2250")
+    raw = os.getenv("WORKSHOP_PRICE_PER_SEAT", "3000")
     try:
         return max(0.0, float(raw))
     except ValueError:
-        return 2250.0
+        return 3000.0
 
 
 def amount_due(seats: int) -> float:
