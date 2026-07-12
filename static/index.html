@@ -149,6 +149,15 @@
     <section class="payment-card" id="payment-section" hidden>
       <h2>Complete Payment</h2>
       <p class="payment-intro">Pay the exact amount below to confirm your registration.</p>
+      <div class="event-summary">
+        <p><strong>📅 Date:</strong> Thursday, 23 July 2026</p>
+        <p><strong>📍 Venue:</strong> Sharanya, House no: 36, Near SFS Richmond Apartment, Sashtamangalam</p>
+        <p>
+          <a href="https://maps.google.com/?q=8.515356,76.973564" target="_blank" rel="noopener noreferrer">
+            Open venue in Google Maps
+          </a>
+        </p>
+      </div>
       <p class="payment-amount" id="payment-amount"></p>
       <p class="payment-breakdown" id="payment-breakdown"></p>
       <p class="registration-ref">Ref: <span id="registration-id"></span></p>
@@ -203,10 +212,11 @@
       <h2>Payment details received</h2>
       <p id="success-message">We've received your payment details. We'll verify your UPI payment and confirm your seat on WhatsApp shortly.</p>
       <div class="success-details">
-        <p><strong>Thursday, 23 July 2026</strong></p>
-        <p>Sharanya, House no: 36<br />Near SFS Richmond Apartment, Sashtamangalam</p>
+        <p class="success-details-title">Your workshop details</p>
+        <p><strong>📅 Date:</strong> <span id="success-date">Thursday, 23 July 2026</span></p>
+        <p><strong>📍 Venue:</strong> <span id="success-venue">Sharanya, House no: 36, Near SFS Richmond Apartment, Sashtamangalam</span></p>
         <p>
-          <a href="https://maps.google.com/?q=8.515356,76.973564" target="_blank" rel="noopener noreferrer">
+          <a id="success-maps-link" href="https://maps.google.com/?q=8.515356,76.973564" target="_blank" rel="noopener noreferrer">
             Open venue in Google Maps
           </a>
         </p>

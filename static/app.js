@@ -117,6 +117,18 @@ confirmPaymentBtn.addEventListener("click", async () => {
     }
 
     successMessage.textContent = result.message;
+    if (result.workshop_date) {
+      const dateEl = document.getElementById("success-date");
+      if (dateEl) dateEl.textContent = result.workshop_date;
+    }
+    if (result.venue) {
+      const venueEl = document.getElementById("success-venue");
+      if (venueEl) venueEl.textContent = result.venue;
+    }
+    if (result.maps_url) {
+      const mapsEl = document.getElementById("success-maps-link");
+      if (mapsEl) mapsEl.href = result.maps_url;
+    }
     if (result.whatsapp_link && result.whatsapp_number) {
       applyWhatsappContact(result.whatsapp_link, result.whatsapp_number);
     }

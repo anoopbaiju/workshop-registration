@@ -14,6 +14,7 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from app.payment import payment_details, public_pricing
 from app.sheets import claim_payment, confirm_registration, create_pending_registration, list_registrations
+from app.workshop import WORKSHOP_DATE, WORKSHOP_MAPS_URL, WORKSHOP_VENUE_NAME, venue_one_line
 
 load_dotenv()
 
@@ -179,6 +180,10 @@ def confirm_payment(payload: PaymentConfirm):
             "Thank you! We've received your payment details. "
             "We'll verify the UPI payment and confirm your seat on WhatsApp shortly."
         ),
+        "workshop_date": WORKSHOP_DATE,
+        "venue_name": WORKSHOP_VENUE_NAME,
+        "venue": venue_one_line(),
+        "maps_url": WORKSHOP_MAPS_URL,
         "whatsapp_number": WHATSAPP_NUMBER,
         "whatsapp_link": WHATSAPP_LINK,
     }

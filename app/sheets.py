@@ -14,6 +14,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 
 from app.payment import amount_due
+from app.workshop import confirmation_message
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
@@ -37,13 +38,7 @@ HEADERS = [
 def whatsapp_confirm_link(name: str, whatsapp: str) -> str:
     """Pre-filled wa.me link for organizer to send after payment is verified."""
     digits = whatsapp.lstrip("+").replace(" ", "")
-    message = (
-        f"Hi {name}, ✅ Your payment for *Moss & Magic* terrarium workshop is confirmed! "
-        f"🌿 Thursday, 23 July 2026 at Sharanya, House no: 36, Near SFS Richmond Apartment, Sashtamangalam. "
-        f"📍 https://maps.google.com/?q=8.515356,76.973564 "
-        f"We look forward to seeing you! – Dhruvs Creations"
-    )
-    return f"https://wa.me/{digits}?text={quote(message)}"
+    return f"https://wa.me/{digits}?text={quote(confirmation_message(name))}"
 
 
 def _credentials() -> Credentials:
@@ -185,7 +180,8 @@ def confirm_registration(registration_id: str) -> dict:
     status = ws.cell(row_idx, 12).value or ""
     name = ws.cell(row_idx, 3).value or ""
     whatsapp = ws.cell(row_idx, 4).value or ""
-    link = ws.cell(row_idx, 13).value or whatsapp_confirm_link(name, whatsapp)
+    link = whatsapp_confirm_link(name, whatsapp)
+    ws.update_cell(row_idx, 13, link)
 
     if status == "Confirmed":
         return {

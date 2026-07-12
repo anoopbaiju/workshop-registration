@@ -472,6 +472,31 @@ textarea {
   color: var(--text-muted);
 }
 
+.event-summary {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--cream);
+  border-radius: 12px;
+  text-align: left;
+}
+
+.event-summary p {
+  margin: 0.3rem 0;
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.event-summary a {
+  color: var(--forest);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.event-summary a:hover {
+  text-decoration: underline;
+}
+
 .payment-amount {
   margin: 0;
   font-size: 2rem;
@@ -641,10 +666,13 @@ textarea {
   border-radius: 12px;
 }
 
-.success-details p {
-  margin: 0.15rem 0;
-  color: var(--text);
-  font-size: 0.9rem;
+.success-details-title {
+  margin: 0 0 0.55rem !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--forest-light) !important;
 }
 
 .success-details a {
