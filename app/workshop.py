@@ -2,6 +2,7 @@
 
 WORKSHOP_TITLE = "Moss & Magic"
 WORKSHOP_DATE = "Thursday, 23 July 2026"
+WORKSHOP_TIME = "10:30 AM to 12:30 PM"
 WORKSHOP_VENUE_NAME = "Sharanya"
 WORKSHOP_VENUE_LINES = [
     "House no: 36",
@@ -19,8 +20,9 @@ def confirmation_message(name: str) -> str:
     """WhatsApp confirmation text sent after payment is verified."""
     address = "\n".join(WORKSHOP_VENUE_LINES)
     return (
-        f"Hi {name}, ✅ Your payment for *{WORKSHOP_TITLE}* terrarium workshop is confirmed!\n\n"
+        f"Hi {name}, ✅ Your slot for *{WORKSHOP_TITLE}* terrarium workshop is confirmed!\n\n"
         f"📅 *Date:* {WORKSHOP_DATE}\n"
+        f"🕙 *Time:* {WORKSHOP_TIME}\n"
         f"📍 *Venue:* {WORKSHOP_VENUE_NAME}\n"
         f"{address}\n"
         f"🗺️ {WORKSHOP_MAPS_URL}\n\n"

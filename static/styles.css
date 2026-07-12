@@ -217,6 +217,14 @@ body {
   line-height: 1.2;
 }
 
+.date-time {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--forest-light);
+}
+
 .date-note {
   margin: 0.55rem 0 0;
   font-size: 0.85rem;

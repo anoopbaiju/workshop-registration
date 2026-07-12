@@ -121,6 +121,10 @@ confirmPaymentBtn.addEventListener("click", async () => {
       const dateEl = document.getElementById("success-date");
       if (dateEl) dateEl.textContent = result.workshop_date;
     }
+    if (result.workshop_time) {
+      const timeEl = document.getElementById("success-time");
+      if (timeEl) timeEl.textContent = result.workshop_time;
+    }
     if (result.venue) {
       const venueEl = document.getElementById("success-venue");
       if (venueEl) venueEl.textContent = result.venue;
