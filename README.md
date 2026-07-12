@@ -1,7 +1,7 @@
 # Terrarium Workshop Registration
 
 Mobile-friendly registration page for **Dhruvs Creations — Terrarium Workshop**.  
-**Saturday, 11 July 2026** · Sharanya, Shastamangalam, Trivandrum.
+**Thursday, 23 July 2026** · Sharanya, Shastamangalam, Trivandrum.
 
 Share the link on WhatsApp; each submission is saved automatically to your **Google Sheet**.
 
@@ -72,7 +72,7 @@ Open **http://localhost:8080** — submit a test registration and check your Goo
 
 Once deployed with a public URL, send:
 
-> 🌿 Terrarium Workshop — Saturday, 11 July  
+> 🌿 Terrarium Workshop — Thursday, 23 July  
 > Register here (limited seats): https://your-link.com  
 > WhatsApp: +91 95676 02762
 

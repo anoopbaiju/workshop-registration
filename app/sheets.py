@@ -39,7 +39,7 @@ def whatsapp_confirm_link(name: str, whatsapp: str) -> str:
     digits = whatsapp.lstrip("+").replace(" ", "")
     message = (
         f"Hi {name}, ✅ Your payment for *Moss & Magic* terrarium workshop is confirmed! "
-        f"🌿 Saturday, 11 July 2026. We look forward to seeing you! – Dhruvs Creations"
+        f"🌿 Thursday, 23 July 2026. We look forward to seeing you! – Dhruvs Creations"
     )
     return f"https://wa.me/{digits}?text={quote(message)}"
 
