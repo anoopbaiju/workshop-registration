@@ -675,6 +675,13 @@ textarea {
   color: var(--forest-light) !important;
 }
 
+.success-details p {
+  margin: 0.3rem 0;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
 .success-details a {
   color: var(--forest);
   font-weight: 600;
